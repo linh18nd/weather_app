@@ -1,7 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-
+import 'package:weather_app/src/data/controller.dart/bloc/weather_state.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/src/data/controller.dart/provider/weather_controller.dart';
 import '../../data/models/city.dart';
 
 class SearchBar extends SearchDelegate {
@@ -43,7 +43,9 @@ class SearchBar extends SearchDelegate {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(citys[index].name),
-          onTap: () {},
+          onTap: () {
+            close(context, citys[index]);
+          },
         );
       },
     );
@@ -60,7 +62,10 @@ class SearchBar extends SearchDelegate {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(citys[index].name),
-          onTap: () {},
+          onTap: () {
+            context.read<WeatherController>().getWeather(citys[index]);
+            close(context, citys[index]);
+          },
         );
       },
     );

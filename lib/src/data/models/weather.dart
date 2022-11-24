@@ -1,23 +1,20 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:weather_app/src/data/models/city.dart';
 
 class Weather {
   final String main;
   final String description;
+  final String icon;
   Weather(
     this.main,
     this.description,
+    this.icon,
   );
   factory Weather.fromJson(Map<String, dynamic> jsonObject) {
-    return Weather(
-        jsonObject['main'] as String, jsonObject["description"] as String);
-  }
-
-  void showInf() {
-    print("Trạng thái: ${this.main},");
-    print("Chi tiết: ${this.description}");
+    return Weather(jsonObject['main'] as String,
+        jsonObject["description"] as String, jsonObject["icon"] as String);
   }
 }
 
@@ -28,9 +25,13 @@ class Main {
   factory Main.fromJson(Map<String, dynamic> jsonObject) {
     return Main(jsonObject["temp"] as double, jsonObject["humidity"] as int);
   }
-  void showInf() {
-    print("nhiệt độ: ${(this.temp - 273).ceilToDouble()}'C");
-    print("độ ẩm: ${this.humidity}%");
+}
+
+class Wind {
+  final double speed;
+  Wind(this.speed);
+  factory Wind.fromJson(Map<String, dynamic> jsonObject) {
+    return Wind(jsonObject["speed"] as double);
   }
 }
 
@@ -38,8 +39,8 @@ class Data {
   final Weather weather;
   final Main main;
   final String name;
-  final DateTime dateTime;
-  Data(this.name, this.main, this.weather, this.dateTime);
+  final Wind wind;
+  Data(this.name, this.main, this.weather, this.wind);
   factory Data.formJson(Map<String, dynamic> jsonObject) {
     final jsonMain = jsonObject["main"];
     Main main = Main.fromJson(jsonMain);
@@ -47,13 +48,7 @@ class Data {
     Weather weather = Weather.fromJson(jsonWeather[0]);
 
     return Data(jsonObject["name"] as String, main, weather,
-        DateTime.utc(jsonObject["dt"] as int));
-  }
-  void showInf() {
-    print("Tên thành phố: ${this.name}");
-    print("Thời gian đo: ${this.dateTime}");
-    this.main.showInf();
-    this.weather.showInf();
+        Wind.fromJson(jsonObject["wind"]));
   }
 }
 
@@ -62,9 +57,9 @@ Map<String, dynamic> convertFromJsonToMap(String jsonString) {
   return jsonObject;
 }
 
-Future<Data> getPostFromBackend(double lon, double lat) async {
+Future<Data> getWeatherFromBackend(City city) async {
   String url =
-      "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=9ee05338ba287fbcbdde929e3e39b99c";
+      "https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&lang=vi&appid=9ee05338ba287fbcbdde929e3e39b99c";
   final uri = Uri.parse(url);
   try {
     final response = await get(uri);
@@ -73,12 +68,6 @@ Future<Data> getPostFromBackend(double lon, double lat) async {
     final Data data = Data.formJson(jsonData);
     return data;
   } catch (e) {
-    print(e);
     rethrow;
   }
-}
-
-void doSomething(double lon, double lat) async {
-  Data data = await getPostFromBackend(lon, lat);
-  data.showInf();
 }
