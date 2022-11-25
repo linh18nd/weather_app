@@ -11,6 +11,13 @@ class City {
     return City(jsonObject["name"] as String, jsonObject["lat"] as double,
         jsonObject["lon"] as double);
   }
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "lat": lat,
+      "lon": lon,
+    };
+  }
 }
 
 Map<String, dynamic> convertJsonToObject(String jsonData) {

@@ -35,20 +35,36 @@ class Wind {
   }
 }
 
+class Sys {
+  final int sunrise;
+  final int sunset;
+  Sys(this.sunrise, this.sunset);
+  factory Sys.fromJson(Map<String, dynamic> jsonObject) {
+    return Sys(jsonObject["sunrise"] as int, jsonObject["sunset"] as int);
+  }
+}
+
 class Data {
   final Weather weather;
   final Main main;
   final String name;
   final Wind wind;
-  Data(this.name, this.main, this.weather, this.wind);
+  final int dt;
+  final Sys sys;
+  Data(this.name, this.main, this.weather, this.wind, this.dt, this.sys);
   factory Data.formJson(Map<String, dynamic> jsonObject) {
     final jsonMain = jsonObject["main"];
     Main main = Main.fromJson(jsonMain);
     final jsonWeather = jsonObject["weather"];
     Weather weather = Weather.fromJson(jsonWeather[0]);
 
-    return Data(jsonObject["name"] as String, main, weather,
-        Wind.fromJson(jsonObject["wind"]));
+    return Data(
+        jsonObject["name"] as String,
+        main,
+        weather,
+        Wind.fromJson(jsonObject["wind"]),
+        jsonObject["dt"] as int,
+        Sys.fromJson(jsonObject["sys"]));
   }
 }
 
@@ -59,7 +75,7 @@ Map<String, dynamic> convertFromJsonToMap(String jsonString) {
 
 Future<Data> getWeatherFromBackend(City city) async {
   String url =
-      "https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&lang=vi&appid=9ee05338ba287fbcbdde929e3e39b99c";
+      "https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&lang=vi&appid=9ee05338ba287fbcbdde929e3e39b99c&units=metric";
   final uri = Uri.parse(url);
   try {
     final response = await get(uri);

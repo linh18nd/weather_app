@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/src/data/models/city.dart';
+import 'package:weather_app/src/theme/theme.dart';
 import 'package:weather_app/src/ui/screens/home_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -7,9 +8,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        textTheme: WeatherAppTheme.textTheme,
+        fontFamily: "Roboto",
+      ),
       debugShowCheckedModeBanner: false,
-      home: BuildAppBar(),
+      home: const BuildAppBar(),
     );
   }
 }
