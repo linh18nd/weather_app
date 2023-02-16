@@ -7,7 +7,8 @@ import '../../data/models/city.dart';
 
 class SearchBar extends SearchDelegate {
   List<City> citys = [];
-  //SearchBar.info(this.citys);
+  SearchBar.info(this.citys);
+  SearchBar();
 
   void _getData(String query) async {
     citys = await getCityFromBackend(query);
